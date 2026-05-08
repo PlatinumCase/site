@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sumnet – Приложение для общения и поиска контактов</title>
+    <meta name="description" content="Sumnet — приложение для общения и поиска контактов по номеру или ID.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="particles" aria-hidden="true"></div>
+
+    <header class="topbar">
+        <div class="container topbar-inner">
+            <div class="brand">
+                <div class="brand-text">
+                    <span class="brand-name">Sumnet</span>
+                    <span class="brand-tagline">Найди и свяжись с людьми по номеру или ID</span>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-copy">
+                    <span class="badge">
+                        <span class="badge-dot"></span>
+                        Общение · Поиск · Профили
+                    </span>
+                    <h2>Скачай<br><em>Sumnet</em></h2>
+                    <p>
+                        Простой и безопасный способ найти контакты и начать общение.
+                        Аккуратный интерфейс, быстрый доступ и удобная работа на телефоне.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a href="https://github.com/PlatinumCase/sumnet-apk/releases/download/v1.0.0/app-release.apk"
+                           class="btn btn-primary"
+                           download>
+                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                           Скачать APK
+                        </a>
+                        <a href="#features" class="btn btn-secondary">Посмотреть возможности</a>
+                    </div>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <strong>v1.0</strong>
+                        <span>Первый релиз</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <strong>Android</strong>
+                        <span>APK файл</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <strong>Бесплатно</strong>
+                        <span>Без рекламы</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <div class="features-head">
+                    <h2>Особенности</h2>
+                    <p>Всё что нужно для быстрого поиска и связи</p>
+                </div>
+
+                <div class="cards">
+                    <article class="card">
+                        <div class="card-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </div>
+                        <h3>Поиск по номеру</h3>
+                        <p>Введите телефонный номер и найдите пользователя в приложении.</p>
+                    </article>
+
+                    <article class="card">
+                        <div class="card-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <h3>Поиск по ID</h3>
+                        <p>Используйте публичный ID (@username) для быстрого поиска.</p>
+                    </article>
+
+                    <article class="card">
+                        <div class="card-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2a10 10 0 1 0 10 10"></path>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                        </div>
+                        <h3>Быстрый профиль</h3>
+                        <p>Настройте имя и публичный ID, которые видны другим.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact">
+            <div class="container contact-shell">
+                <div class="section-head">
+                    <h2>Сообщить об ошибке</h2>
+                    <p>Опиши проблему, и сообщение уйдёт без перехода на другую страницу.</p>
+                </div>
+
+                <form id="contact-form" class="contact-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">Ваше имя</label>
+                            <input type="text" id="name" name="name" placeholder="Например, Алексей" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="_replyto" placeholder="name@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Сообщение</label>
+                        <textarea id="message" name="message" rows="6" placeholder="Опиши, что произошло" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-wide">Отправить</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Sumnet. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
