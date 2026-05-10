@@ -14,33 +14,68 @@
     <div class="particles" aria-hidden="true"></div>
 
     <div class="site-header-wrap">
-        <div class="announcement-bar" role="alert">
+
+        <!-- Announcement bar — заполняется из status.json -->
+        <div class="announcement-bar" id="announcement-bar" role="alert" style="display:none">
             <div class="announcement-inner">
                 <span class="announcement-icon" aria-hidden="true">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
                 </span>
-                <span class="announcement-text">
-                    <strong>Временные неполадки&nbsp;·&nbsp;7–9 мая</strong>
-                    &nbsp;Мессенджер может быть недоступен на территории РФ в связи с ограничениями белых списков
-                </span>
-            </div>
-        </div>
-
-    <header class="topbar">
-        <div class="container topbar-inner">
-            <div class="brand">
-                <div class="brand-text">
-                    <span class="brand-name">Sumnet</span>
-                    <span class="brand-tagline">Найди и свяжись с людьми по номеру или ID</span>
+                <div class="announcement-content">
+                    <span class="announcement-title" id="ann-title"></span>
+                    <span class="announcement-sep">&nbsp;·&nbsp;</span>
+                    <span class="announcement-desc" id="ann-desc"></span>
                 </div>
             </div>
-
         </div>
-    </header>
+
+        <header class="topbar">
+            <div class="container topbar-inner">
+                <div class="brand">
+                    <div class="brand-text">
+                        <span class="brand-name">Sumnet</span>
+                        <span class="brand-tagline">Найди и свяжись с людьми по номеру или ID</span>
+                    </div>
+                </div>
+
+                <!-- Навигация -->
+                <nav class="topnav" aria-label="Навигация">
+                    <a href="#download" class="topnav-link" data-section="download">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Скачать
+                    </a>
+                    <a href="#status" class="topnav-link" data-section="status">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Статус
+                    </a>
+                    <a href="#contact" class="topnav-link" data-section="contact">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Ошибка
+                    </a>
+                </nav>
+            </div>
+        </header>
     </div><!-- /.site-header-wrap -->
 
     <main>
-        <section class="hero">
+        <section id="download" class="hero">
             <div class="container">
                 <div class="hero-copy">
                     <span class="badge">
@@ -55,9 +90,13 @@
 
                     <div class="hero-actions">
                         <a href="https://github.com/PlatinumCase/sumnet-apk/releases/download/v1.0.0/app-release.apk"
-                           class="btn btn-primary"
-                           download>
-                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                           class="btn btn-primary" download>
+                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                           </svg>
                            Скачать APK
                         </a>
                         <a href="#features" class="btn btn-secondary">Посмотреть возможности</a>
@@ -93,9 +132,10 @@
                 <div class="cards">
                     <article class="card">
                         <div class="card-icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                             </svg>
                         </div>
                         <h3>Поиск по номеру</h3>
@@ -104,9 +144,10 @@
 
                     <article class="card">
                         <div class="card-icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
                             </svg>
                         </div>
                         <h3>Поиск по ID</h3>
@@ -115,9 +156,10 @@
 
                     <article class="card">
                         <div class="card-icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2a10 10 0 1 0 10 10"></path>
-                                <path d="M12 6v6l4 2"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2a10 10 0 1 0 10 10"/>
+                                <path d="M12 6v6l4 2"/>
                             </svg>
                         </div>
                         <h3>Быстрый профиль</h3>
@@ -127,7 +169,29 @@
             </div>
         </section>
 
-        <section class="contact">
+        <!-- Секция статусов — заполняется из status.json -->
+        <section id="status" class="status-section">
+            <div class="container">
+                <div class="features-head">
+                    <h2>Статус работоспособности</h2>
+                    <p>Актуальное состояние всех компонентов приложения</p>
+                </div>
+
+                <div class="status-grid" id="status-grid">
+                    <!-- JS заполняет отсюда -->
+                    <div class="status-skeleton"></div>
+                    <div class="status-skeleton"></div>
+                    <div class="status-skeleton"></div>
+                    <div class="status-skeleton"></div>
+                    <div class="status-skeleton"></div>
+                    <div class="status-skeleton"></div>
+                </div>
+
+                <p class="status-note" id="status-note"></p>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
             <div class="container contact-shell">
                 <div class="section-head">
                     <h2>Сообщить об ошибке</h2>
