@@ -1,10 +1,51 @@
 document.addEventListener("DOMContentLoaded", () => {
     initSmoothScroll();
     initForm();
+    initCustomSelects();
     createParticles();
     loadStatus();
-    initNavHighlight();
+    initScrollbarTrack();
+    preventActiveNavReload();
 });
+
+/* ── SCROLLBAR TRACK VISIBILITY ── */
+let scrollbarTrackUpdateScheduled = false;
+
+function updateScrollbarTrack() {
+    const needsScroll = document.documentElement.scrollHeight > window.innerHeight + 1;
+    document.documentElement.classList.toggle("no-scroll", !needsScroll);
+    document.body.classList.toggle("no-scroll", !needsScroll);
+    updateHeaderLayout();
+}
+
+function updateHeaderLayout() {
+    const headerWrap = document.querySelector(".site-header-wrap");
+    if (!headerWrap) return;
+
+    const scrollbarComp = Math.max(window.innerWidth - document.documentElement.clientWidth, 0);
+    const headerHeight = Math.ceil(headerWrap.getBoundingClientRect().height);
+
+    document.documentElement.style.setProperty("--viewport-scrollbar-comp", `${scrollbarComp}px`);
+    document.documentElement.style.setProperty("--header-offset", `${headerHeight}px`);
+}
+
+function scheduleScrollbarTrackUpdate() {
+    if (scrollbarTrackUpdateScheduled) return;
+    scrollbarTrackUpdateScheduled = true;
+    requestAnimationFrame(() => {
+        scrollbarTrackUpdateScheduled = false;
+        updateScrollbarTrack();
+    });
+}
+
+function initScrollbarTrack() {
+    updateScrollbarTrack();
+    window.addEventListener("resize", scheduleScrollbarTrackUpdate);
+    window.addEventListener("load", scheduleScrollbarTrackUpdate, { once: true });
+    if (document.fonts?.ready) {
+        document.fonts.ready.then(scheduleScrollbarTrackUpdate).catch(() => {});
+    }
+}
 
 /* ── STATUS.JSON ── */
 async function loadStatus() {
@@ -14,24 +55,47 @@ async function loadStatus() {
         const data = await res.json();
         renderAnnouncement(data.announcement);
         renderStatusGrid(data.services);
+        scheduleScrollbarTrackUpdate();
     } catch (e) {
-        // Если файл недоступен — скрываем бар, показываем заглушку
-        document.getElementById("announcement-bar").style.display = "none";
+        const bar = document.getElementById("announcement-bar");
+        if (bar) bar.classList.remove("ann-visible");
         renderStatusFallback();
+        scheduleScrollbarTrackUpdate();
+        setTimeout(scheduleScrollbarTrackUpdate, 360);
     }
 }
 
 /* ── ANNOUNCEMENT BAR ── */
 function renderAnnouncement(ann) {
     const bar = document.getElementById("announcement-bar");
+    if (!bar) return;
+
     if (!ann || !ann.enabled) {
-        bar.style.display = "none";
+        bar.classList.remove("ann-visible");
+        try { sessionStorage.setItem("ann-state", JSON.stringify({ visible: false })); } catch(e) {}
+        scheduleScrollbarTrackUpdate();
+        setTimeout(scheduleScrollbarTrackUpdate, 360);
         return;
     }
 
-    document.getElementById("ann-title").textContent = ann.title;
-    document.getElementById("ann-desc").innerHTML = parseBold(ann.message);
-    bar.style.display = "";
+    const titleEl = document.getElementById("ann-title");
+    const descEl  = document.getElementById("ann-desc");
+    const desc    = parseBold(ann.message);
+
+    // Only update content if it changed (avoid re-triggering transition)
+    if (titleEl.textContent !== ann.title) titleEl.textContent = ann.title;
+    if (descEl.innerHTML    !== desc)      descEl.innerHTML    = desc;
+
+    try {
+        sessionStorage.setItem("ann-state", JSON.stringify({
+            visible: true, title: ann.title, desc
+        }));
+    } catch(e) {}
+
+    if (!bar.classList.contains("ann-visible")) {
+        requestAnimationFrame(() => bar.classList.add("ann-visible"));
+    }
+    setTimeout(scheduleScrollbarTrackUpdate, 360);
 }
 
 /** *текст* → <strong>текст</strong> */
@@ -57,6 +121,8 @@ const STATUS_META = {
 
 function renderStatusGrid(services) {
     const grid = document.getElementById("status-grid");
+    if (!grid) return; // страница без статус-сетки — пропускаем
+
     if (!services) { grid.innerHTML = ""; return; }
 
     grid.innerHTML = Object.entries(services).map(([key, svc]) => {
@@ -87,6 +153,8 @@ function renderStatusGrid(services) {
     const total   = Object.keys(services).length;
     const issues  = Object.values(services).filter(s => s.status !== "ok").length;
     const noteEl  = document.getElementById("status-note");
+    if (!noteEl) return;
+
     if (issues === 0) {
         noteEl.textContent = "Все системы работают в штатном режиме.";
         noteEl.className   = "status-note ok";
@@ -98,29 +166,8 @@ function renderStatusGrid(services) {
 
 function renderStatusFallback() {
     const grid = document.getElementById("status-grid");
+    if (!grid) return;
     grid.innerHTML = `<p class="status-fallback">Не удалось загрузить статус. Проверьте наличие файла status.json.</p>`;
-}
-
-/* ── NAV HIGHLIGHT (IntersectionObserver) ── */
-function initNavHighlight() {
-    const links    = document.querySelectorAll(".topnav-link[data-section]");
-    const sections = ["download", "features", "status", "contact"];
-
-    const obs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id;
-                links.forEach(l => {
-                    l.classList.toggle("active", l.dataset.section === id);
-                });
-            }
-        });
-    }, { threshold: 0.35 });
-
-    sections.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) obs.observe(el);
-    });
 }
 
 /* ── SMOOTH SCROLL ── */
@@ -138,12 +185,84 @@ function initSmoothScroll() {
 }
 
 /* ── FORM ── */
+const FIELD_ERRORS = {
+    name:     { valueMissing: "Пожалуйста, введите ваше имя." },
+    email:    { valueMissing: "Введите адрес электронной почты.", typeMismatch: "Проверьте формат: name@example.com" },
+    category: { valueMissing: "Выберите категорию ошибки из списка." },
+    message:  { valueMissing: "Опишите проблему — без этого мы не сможем помочь." },
+};
+
+function getFieldError(input) {
+    const rules = FIELD_ERRORS[input.id] || {};
+    if (input.validity.valueMissing) return rules.valueMissing || "Это поле обязательно.";
+    if (input.validity.typeMismatch) return rules.typeMismatch || "Некорректное значение.";
+    if (input.validity.tooShort)     return `Минимум ${input.minLength} символов.`;
+    return null;
+}
+
+function showFieldError(group, msg) {
+    clearFieldError(group);
+    group.classList.add("has-error");
+    const err = document.createElement("span");
+    err.className = "form-error-msg";
+    err.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/></svg>${msg}`;
+    group.appendChild(err);
+    scheduleScrollbarTrackUpdate();
+}
+
+function clearFieldError(group) {
+    group.classList.remove("has-error");
+    const existing = group.querySelector(".form-error-msg");
+    if (existing) existing.remove();
+    scheduleScrollbarTrackUpdate();
+}
+
+function validateForm(form) {
+    let valid = true;
+    // Validate standard inputs and textareas
+    form.querySelectorAll("input:not([type=hidden]), textarea").forEach(input => {
+        const group = input.closest(".form-group");
+        if (!group) return;
+        const msg = getFieldError(input);
+        if (msg) { showFieldError(group, msg); valid = false; }
+        else clearFieldError(group);
+    });
+    // Validate custom selects (hidden input)
+    form.querySelectorAll(".custom-select").forEach(cs => {
+        const hidden = cs.querySelector("input[type=hidden]");
+        const group  = cs.closest(".form-group");
+        if (!hidden || !group) return;
+        if (!hidden.value) {
+            showFieldError(group, FIELD_ERRORS.category?.valueMissing || "Выберите категорию.");
+            valid = false;
+        } else clearFieldError(group);
+    });
+    return valid;
+}
+
 function initForm() {
     const form = document.getElementById("contact-form");
     if (!form) return;
 
+    // Clear errors as soon as the user starts editing a field that already has one
+    form.querySelectorAll("input, textarea").forEach(input => {
+        input.addEventListener("input", () => {
+            const group = input.closest(".form-group");
+            if (group && group.classList.contains("has-error")) clearFieldError(group);
+        });
+    });
+
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        if (!validateForm(form)) {
+            const firstErr = form.querySelector(".has-error");
+            if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+            return;
+        }
 
         const button = form.querySelector('button[type="submit"]');
         const originalText = button?.textContent || "Отправить";
@@ -197,6 +316,81 @@ function showToast(text, success) {
     toast._timer = setTimeout(() => toast.classList.remove("show"), 3000);
 }
 
+/* ── CUSTOM SELECT ── */
+function initCustomSelects() {
+    document.querySelectorAll(".custom-select").forEach(cs => {
+        const trigger  = cs.querySelector(".cs-trigger");
+        const valueEl  = cs.querySelector(".cs-value");
+        const dropdown = cs.querySelector(".cs-dropdown");
+        const hidden   = cs.querySelector("input[type=hidden]");
+        const options  = cs.querySelectorAll(".cs-option");
+
+        function open() {
+            cs.classList.add("cs-open");
+            trigger.setAttribute("aria-expanded", "true");
+            options.forEach(o => (o.tabIndex = 0));
+        }
+        function close() {
+            cs.classList.remove("cs-open");
+            trigger.setAttribute("aria-expanded", "false");
+            options.forEach(o => (o.tabIndex = -1));
+        }
+
+        trigger.addEventListener("click", () => cs.classList.contains("cs-open") ? close() : open());
+
+        // Close all others when opening
+        trigger.addEventListener("click", () => {
+            if (cs.classList.contains("cs-open")) {
+                document.querySelectorAll(".custom-select.cs-open").forEach(other => {
+                    if (other !== cs) other.querySelector(".cs-trigger").click();
+                });
+            }
+        });
+
+        options.forEach(opt => {
+            opt.addEventListener("click", () => {
+                hidden.value  = opt.dataset.value;
+                valueEl.textContent = opt.textContent;
+                valueEl.classList.remove("cs-placeholder");
+                options.forEach(o => o.classList.remove("cs-selected"));
+                opt.classList.add("cs-selected");
+                close();
+                trigger.focus();
+                // Clear error on selection
+                const group = cs.closest(".form-group");
+                if (group) clearFieldError(group);
+            });
+
+            opt.addEventListener("keydown", e => {
+                if (e.key === "Enter" || e.key === " ") { e.preventDefault(); opt.click(); }
+                if (e.key === "ArrowDown") { e.preventDefault(); (opt.nextElementSibling || options[0])?.focus(); }
+                if (e.key === "ArrowUp")   { e.preventDefault(); (opt.previousElementSibling || options[options.length - 1])?.focus(); }
+                if (e.key === "Escape")    { close(); trigger.focus(); }
+            });
+        });
+
+        trigger.addEventListener("keydown", e => {
+            if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                open();
+                options[0]?.focus();
+            }
+        });
+
+        document.addEventListener("click", e => {
+            if (!cs.contains(e.target)) close();
+        });
+    });
+}
+
+function preventActiveNavReload() {
+    document.querySelectorAll(".topnav-link.active").forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+        });
+    });
+}
+
 /* ── PARTICLES ── */
 function createParticles() {
     const container = document.querySelector(".particles");
@@ -243,6 +437,7 @@ function createParticles() {
         }
         requestAnimationFrame(draw);
     }
+    
 
     draw();
 
