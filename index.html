@@ -6,7 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-    <title>Sumnet – Приложение для общения и поиска контактов</title>
+    <title>Sumnet – Скачать</title>
     <meta name="description" content="Sumnet — приложение для общения и поиска контактов по номеру или ID.">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -16,7 +16,7 @@
     <div class="site-header-wrap">
 
         <!-- Announcement bar — заполняется из status.json -->
-        <div class="announcement-bar" id="announcement-bar" role="alert" style="display:none">
+        <div class="announcement-bar" id="announcement-bar" role="alert" >
             <div class="announcement-inner">
                 <span class="announcement-icon" aria-hidden="true">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -33,6 +33,22 @@
                 </div>
             </div>
         </div>
+        <script>
+        (function(){
+            try {
+                var s = sessionStorage.getItem("ann-state");
+                if (!s) return;
+                var d = JSON.parse(s);
+                if (!d.visible) return;
+                var bar = document.getElementById("announcement-bar");
+                if (!bar) return;
+                document.getElementById("ann-title").textContent = d.title || "";
+                document.getElementById("ann-desc").innerHTML = d.desc || "";
+                bar.classList.add("ann-instant", "ann-visible");
+                requestAnimationFrame(function(){ bar.classList.remove("ann-instant"); });
+            } catch(e) {}
+        })();
+        </script>
 
         <header class="topbar">
             <div class="container topbar-inner">
@@ -42,10 +58,8 @@
                         <span class="brand-tagline">Найди и свяжись с людьми по номеру или ID</span>
                     </div>
                 </div>
-
-                <!-- Навигация -->
                 <nav class="topnav" aria-label="Навигация">
-                    <a href="#download" class="topnav-link" data-section="download">
+                    <a href="index.html" class="topnav-link active">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -54,7 +68,7 @@
                         </svg>
                         Скачать
                     </a>
-                    <a href="#status" class="topnav-link" data-section="status">
+                    <a href="status.html" class="topnav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"/>
@@ -62,7 +76,7 @@
                         </svg>
                         Статус
                     </a>
-                    <a href="#contact" class="topnav-link" data-section="contact">
+                    <a href="contact.html" class="topnav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -72,10 +86,10 @@
                 </nav>
             </div>
         </header>
-    </div><!-- /.site-header-wrap -->
+    </div>
 
     <main>
-        <section id="download" class="hero">
+        <section class="hero">
             <div class="container">
                 <div class="hero-copy">
                     <span class="badge">
@@ -119,6 +133,41 @@
                         <span>Без рекламы</span>
                     </div>
                 </div>
+
+                <!-- Инструкция по установке -->
+                <div class="install-steps">
+                    <div class="install-steps-head">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        <h3>Как установить</h3>
+                    </div>
+                    <ol class="install-list">
+                        <li>
+                            <span class="install-num">1</span>
+                            <span class="install-text">Нажми кнопку <strong>«Скачать APK»</strong> выше — файл загрузится автоматически.</span>
+                        </li>
+                        <li>
+                            <span class="install-num">2</span>
+                            <span class="install-text">Открой приложение <strong>«Файлы»</strong> или файловый менеджер на устройстве и перейди в папку <strong>«Загрузки»</strong>.</span>
+                        </li>
+                        <li>
+                            <span class="install-num">3</span>
+                            <span class="install-text">Нажми на файл <strong>app-release.apk</strong>. Если появится запрос — разреши установку из неизвестных источников в <strong>Настройки → Безопасность</strong>.</span>
+                        </li>
+                        <li>
+                            <span class="install-num">4</span>
+                            <span class="install-text">Нажми <strong>«Установить»</strong> и дождись завершения.</span>
+                        </li>
+                        <li>
+                            <span class="install-num">5</span>
+                            <span class="install-text">Готово — открой <strong>Sumnet</strong> и зарегистрируйся!</span>
+                        </li>
+                    </ol>
+                </div>
             </div>
         </section>
 
@@ -130,6 +179,7 @@
                 </div>
 
                 <div class="cards">
+                    <!-- Основные — видны всегда (мобильный + ПК) -->
                     <article class="card">
                         <div class="card-icon" aria-hidden="true">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -139,7 +189,7 @@
                             </svg>
                         </div>
                         <h3>Поиск по номеру</h3>
-                        <p>Введите телефонный номер и найдите пользователя в приложении.</p>
+                        <p>Введите телефонный номер и мгновенно найдите пользователя в приложении.</p>
                     </article>
 
                     <article class="card">
@@ -151,7 +201,7 @@
                             </svg>
                         </div>
                         <h3>Поиск по ID</h3>
-                        <p>Используйте публичный ID (@username) для быстрого поиска.</p>
+                        <p>Используйте публичный ID (@username) для быстрого поиска без номера телефона.</p>
                     </article>
 
                     <article class="card">
@@ -163,61 +213,47 @@
                             </svg>
                         </div>
                         <h3>Быстрый профиль</h3>
-                        <p>Настройте имя и публичный ID, которые видны другим.</p>
+                        <p>Настройте имя и публичный ID, которые будут видны другим пользователям.</p>
+                    </article>
+
+                    <!-- Дополнительные — только на ПК (≥ 701px) -->
+                    <article class="card card-desktop-only">
+                        <div class="card-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </div>
+                        <h3>Личные сообщения</h3>
+                        <p>Пишите напрямую — сообщения доставляются быстро и хранятся только у вас.</p>
+                    </article>
+
+                    <article class="card card-desktop-only">
+                        <div class="card-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <h3>Каналы и чаты</h3>
+                        <p>Создавайте групповые чаты и публичные каналы для общения с несколькими людьми сразу.</p>
+                    </article>
+
+                    <article class="card card-desktop-only">
+                        <div class="card-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                            </svg>
+                        </div>
+                        <h3>Уведомления</h3>
+                        <p>Push-уведомления о новых сообщениях и событиях — никогда не пропустите важное.</p>
                     </article>
                 </div>
-            </div>
-        </section>
-
-        <!-- Секция статусов — заполняется из status.json -->
-        <section id="status" class="status-section">
-            <div class="container">
-                <div class="features-head">
-                    <h2>Статус работоспособности</h2>
-                    <p>Актуальное состояние всех компонентов приложения</p>
-                </div>
-
-                <div class="status-grid" id="status-grid">
-                    <!-- JS заполняет отсюда -->
-                    <div class="status-skeleton"></div>
-                    <div class="status-skeleton"></div>
-                    <div class="status-skeleton"></div>
-                    <div class="status-skeleton"></div>
-                    <div class="status-skeleton"></div>
-                    <div class="status-skeleton"></div>
-                </div>
-
-                <p class="status-note" id="status-note"></p>
-            </div>
-        </section>
-
-        <section id="contact" class="contact">
-            <div class="container contact-shell">
-                <div class="section-head">
-                    <h2>Сообщить об ошибке</h2>
-                    <p>Опиши проблему, и сообщение уйдёт без перехода на другую страницу.</p>
-                </div>
-
-                <form id="contact-form" class="contact-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="name">Ваше имя</label>
-                            <input type="text" id="name" name="name" placeholder="Например, Алексей" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="_replyto" placeholder="name@example.com" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="message">Сообщение</label>
-                        <textarea id="message" name="message" rows="6" placeholder="Опиши, что произошло" required></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-wide">Отправить</button>
-                </form>
             </div>
         </section>
     </main>
@@ -231,3 +267,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
