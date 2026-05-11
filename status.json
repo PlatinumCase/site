@@ -10,6 +10,6 @@
     "channels":       { "label": "Создание каналов",     "status": "warn",   "text": "Ограничено"   },
     "chats":          { "label": "Создание чатов",       "status": "warn",   "text": "Ограничено"   },
     "search":         { "label": "Поиск",                "status": "warn",   "text": "Ограничено"   },
-    "change_profile": { "label": "Изменение профиля",    "status": "warn", "text": "Отключено" }
+    "change_profile": { "label": "Изменение профиля",    "status": "warn", "text": "Ограничено" }
   }
 }
