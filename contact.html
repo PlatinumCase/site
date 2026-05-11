@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <title>Sumnet – Сообщить об ошибке</title>
+    <meta name="description" content="Опишите проблему в приложении Sumnet — мы разберёмся.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="particles" aria-hidden="true"></div>
+
+    <div class="site-header-wrap">
+
+        <!-- Announcement bar — заполняется из status.json -->
+        <div class="announcement-bar" id="announcement-bar" role="alert" >
+            <div class="announcement-inner">
+                <span class="announcement-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </span>
+                <div class="announcement-content">
+                    <span class="announcement-title" id="ann-title"></span>
+                    <span class="announcement-sep">&nbsp;·&nbsp;</span>
+                    <span class="announcement-desc" id="ann-desc"></span>
+                </div>
+            </div>
+        </div>
+        <script>
+        (function(){
+            try {
+                var s = sessionStorage.getItem("ann-state");
+                if (!s) return;
+                var d = JSON.parse(s);
+                if (!d.visible) return;
+                var bar = document.getElementById("announcement-bar");
+                if (!bar) return;
+                document.getElementById("ann-title").textContent = d.title || "";
+                document.getElementById("ann-desc").innerHTML = d.desc || "";
+                bar.classList.add("ann-instant", "ann-visible");
+                requestAnimationFrame(function(){ bar.classList.remove("ann-instant"); });
+            } catch(e) {}
+        })();
+        </script>
+
+        <header class="topbar">
+            <div class="container topbar-inner">
+                <div class="brand">
+                    <div class="brand-text">
+                        <span class="brand-name">Sumnet</span>
+                        <span class="brand-tagline">Найди и свяжись с людьми по номеру или ID</span>
+                    </div>
+                </div>
+                <nav class="topnav" aria-label="Навигация">
+                    <a href="index.html" class="topnav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Скачать
+                    </a>
+                    <a href="status.html" class="topnav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Статус
+                    </a>
+                    <a href="contact.html" class="topnav-link active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Ошибка
+                    </a>
+                </nav>
+            </div>
+        </header>
+    </div>
+
+    <main>
+        <section class="contact">
+            <div class="container contact-shell">
+                <div class="section-head">
+                    <h2>Сообщить об ошибке</h2>
+                    <p>Опиши проблему — сообщение уйдёт без перехода на другую страницу.</p>
+                </div>
+
+                <!-- Инструкция: как описать ошибку -->
+                <div class="bug-guide" role="note">
+                    <div class="bug-guide-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        Чтобы мы быстрее разобрались — укажи в сообщении:
+                    </div>
+                    <ul class="bug-guide-list">
+                        <li>Что именно не работает и как это проявляется (например: «кнопка не реагирует», «приложение закрывается»).</li>
+                        <li>Шаги, при которых возникает проблема — что нажимал, куда переходил.</li>
+                        <li>Модель устройства и версию Android (Настройки → О телефоне).</li>
+                        <li>Если есть — скопируй текст ошибки или сделай скриншот и опиши, что на нём.</li>
+                    </ul>
+                </div>
+
+                <form id="contact-form" class="contact-form" novalidate>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">Ваше имя</label>
+                            <input type="text" id="name" name="name" placeholder="Например, Алексей" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="_replyto" placeholder="name@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Категория ошибки</label>
+                        <div class="custom-select" id="category-select">
+                            <button type="button" class="cs-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="cs-value cs-placeholder">Выбери область проблемы…</span>
+                                <svg class="cs-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </button>
+                            <div class="cs-dropdown-clip">
+                            <ul class="cs-dropdown" role="listbox" aria-label="Категория ошибки">
+                                <li class="cs-option" data-value="auth" role="option" tabindex="-1">Авторизация и вход в аккаунт</li>
+                                <li class="cs-option" data-value="messaging" role="option" tabindex="-1">Отправка и получение сообщений</li>
+                                <li class="cs-option" data-value="search" role="option" tabindex="-1">Поиск пользователей</li>
+                                <li class="cs-option" data-value="profile" role="option" tabindex="-1">Изменение профиля</li>
+                                <li class="cs-option" data-value="channels" role="option" tabindex="-1">Каналы и чаты</li>
+                                <li class="cs-option" data-value="notifications" role="option" tabindex="-1">Уведомления</li>
+                                <li class="cs-option" data-value="install" role="option" tabindex="-1">Установка приложения</li>
+                                <li class="cs-option" data-value="other" role="option" tabindex="-1">Другое</li>
+                            </ul>
+                            </div>
+                            <input type="hidden" name="category" id="category" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Описание проблемы</label>
+                        <div class="textarea-wrap">
+                            <textarea id="message" name="message" rows="6"
+                                placeholder="Опиши, что произошло: что делал, что увидел, на каком устройстве…" required></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-wide">Отправить</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Sumnet. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
