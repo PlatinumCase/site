@@ -1,15 +1,15 @@
 {
   "announcement": {
     "enabled": true,
-    "title": "Временные неполадки · 7–10 мая",
+    "title": "Временные неполадки · 7–12 мая",
     "message": "Мессенджер может быть недоступен на территории РФ в связи с *ограничениями белых списков*"
   },
   "services": {
     "auth":           { "label": "Авторизация",          "status": "ok",   "text": "Работает"   },
     "messaging":      { "label": "Отправка сообщений",   "status": "warn", "text": "Ограничено" },
     "channels":       { "label": "Создание каналов",     "status": "warn",   "text": "Ограничено"   },
-    "chats":          { "label": "Создание чатов",       "status": "warn",   "text": " Ограничено"   },
-    "search":         { "label": "Поиск",                "status": "warn",   "text": "Ограничен"   },
-    "change_profile": { "label": "Изменение профиля",    "status": "warn", "text": "Ограничен" }
+    "chats":          { "label": "Создание чатов",       "status": "warn",   "text": "Ограничено"   },
+    "search":         { "label": "Поиск",                "status": "warn",   "text": "Ограничено"   },
+    "change_profile": { "label": "Изменение профиля",    "status": "warn", "text": "Отключено" }
   }
 }
