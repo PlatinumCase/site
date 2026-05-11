@@ -26,6 +26,9 @@
     --radius-lg: 24px;
     --radius-md: 18px;
     --radius-sm: 14px;
+    --page-scrollbar-size: 6px;
+    --header-offset: 0px;
+    --viewport-scrollbar-comp: 0px;
 
     /* Status colours */
     --c-ok:   #2de4cf;
@@ -44,7 +47,92 @@
 }
 
 html {
-    scroll-behavior: smooth;
+    /* scroll-behavior только через JS (scrollIntoView) — убираем отсюда,
+       иначе при прокрутке скроллбаром мышью будет двойной рывок */
+    color-scheme: dark;
+    overflow-y: auto;
+    /* фон html чтобы не было чёрного под body на коротких страницах */
+    background: var(--bg-1);
+}
+
+/* Страничный скроллбар */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: var(--page-scrollbar-size);
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 999px;
+}
+
+/* Скрываем thumb когда прокрутка не нужна */
+html.no-scroll::-webkit-scrollbar-track { background: transparent; }
+html.no-scroll::-webkit-scrollbar-thumb { background: transparent !important; }
+body.no-scroll::-webkit-scrollbar-track { background: transparent; }
+body.no-scroll::-webkit-scrollbar-thumb { background: transparent !important; }
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        180deg,
+        rgba(126, 249, 233, 0.22) 0%,
+        rgba(45, 228, 207, 0.24) 56%,
+        rgba(23, 188, 169, 0.18) 100%
+    );
+    min-height: 52px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    transition: none;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+html::-webkit-scrollbar-thumb:active,
+body::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(
+        180deg,
+        rgba(126, 249, 233, 0.22) 0%,
+        rgba(45, 228, 207, 0.24) 56%,
+        rgba(23, 188, 169, 0.18) 100%
+    );
+    box-shadow: none;
+}
+
+/* Убираем системные кнопки-стрелки целиком:
+   в Chrome/Windows их hover/active частично рисуется нативно и перебивает CSS */
+html::-webkit-scrollbar-button,
+body::-webkit-scrollbar-button,
+html::-webkit-scrollbar-button:single-button,
+body::-webkit-scrollbar-button:single-button,
+html::-webkit-scrollbar-button:vertical:single-button,
+body::-webkit-scrollbar-button:vertical:single-button,
+html::-webkit-scrollbar-button:vertical:single-button:hover,
+body::-webkit-scrollbar-button:vertical:single-button:hover,
+html::-webkit-scrollbar-button:vertical:single-button:active,
+body::-webkit-scrollbar-button:vertical:single-button:active {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+html::-webkit-scrollbar-track-piece,
+body::-webkit-scrollbar-track-piece,
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Firefox */
+html,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(45, 228, 207, 0.24) transparent;
 }
 
 body {
@@ -52,7 +140,11 @@ body {
     line-height: 1.6;
     color: var(--text);
     min-height: 100vh;
-    overflow-x: hidden;
+    /* clip вместо hidden — не создаёт scroll-контейнер, sticky в потомках работает */
+    overflow-x: clip;
+    /* flex-колонка чтобы footer прижимался к низу на коротких страницах */
+    display: flex;
+    flex-direction: column;
     background:
         radial-gradient(circle at top left,  rgba(45, 228, 207, 0.16), transparent 28%),
         radial-gradient(circle at top right, rgba(126, 249, 233, 0.12), transparent 22%),
@@ -87,6 +179,27 @@ body::before {
     height: 100% !important;
 }
 
+/* ══════════════════════════════════════════
+   PAGE TRANSITIONS
+══════════════════════════════════════════ */
+@keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+main {
+    animation: pageFadeIn 0.22s ease both;
+    flex: 1; /* растягивает main чтобы footer всегда был внизу */
+    padding-top: var(--header-offset);
+}
+
+/* Fade-out при уходе со страницы */
+body.page-leaving main {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
 .container {
     width: min(92%, 1180px);
     margin: 0 auto;
@@ -96,8 +209,11 @@ body::before {
    ANNOUNCEMENT BAR
 ══════════════════════════════════════════ */
 .site-header-wrap {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
     z-index: 30;
 }
 
@@ -109,8 +225,22 @@ body::before {
     border-bottom: 1px solid rgba(255, 160, 50, 0.28);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    padding: 0.65rem 1rem;
     overflow: hidden;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.announcement-bar.ann-visible {
+    max-height: 100px;
+    padding: 0.65rem 1rem;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .announcement-inner {
@@ -358,7 +488,7 @@ body::before {
     -webkit-backdrop-filter: blur(14px);
     padding: clamp(2rem, 3.5vw, 3.5rem) clamp(2rem, 4vw, 4rem);
     overflow: hidden;
-    width: 100%;
+    transform: translateZ(0);
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -594,6 +724,27 @@ body::before {
     padding: 0 0 5rem;
 }
 
+
+@media (min-width: 701px) {
+  body.page-status.no-scroll .announcement-inner,
+  body.page-status.no-scroll .topbar-inner,
+  body.page-status.no-scroll .status-section > .container,
+  body.page-status.no-scroll .footer .container {
+    position: relative;
+    left: -5.79px; /* вместо -6px */
+  }
+}
+
+/* mobile: без смещения */
+@media (max-width: 700px) {
+  body.page-status.no-scroll .announcement-inner,
+  body.page-status.no-scroll .topbar-inner,
+  body.page-status.no-scroll .status-section > .container,
+  body.page-status.no-scroll .footer .container {
+    left: 0;
+  }
+}
+
 .status-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -766,10 +917,13 @@ body::before {
    CONTACT
 ══════════════════════════════════════════ */
 .contact {
-    padding: 0 0 5rem;
+    padding: 2.5rem 0 5rem;
 }
 
 .contact-shell {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
     border-radius: var(--radius-xl);
     border: 1px solid var(--border);
     background:
@@ -779,7 +933,7 @@ body::before {
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     padding: clamp(2rem, 4vw, 4rem);
-    overflow: hidden;
+    overflow: clip;
     position: relative;
 }
 
@@ -811,7 +965,7 @@ body::before {
     content: "";
     display: block;
     width: 60px; height: 3px;
-    margin: 0.9rem auto 0;
+    margin: 0.35rem auto 0;
     border-radius: 999px;
     background: linear-gradient(90deg, var(--primary), var(--accent));
     box-shadow: 0 0 18px rgba(45, 228, 207, 0.4);
@@ -863,9 +1017,110 @@ body::before {
     transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
+/* Textarea wrapped in .textarea-wrap for scrollbar clipping */
+.textarea-wrap {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(126, 249, 233, 0.13);
+    background: rgba(255, 255, 255, 0.04);
+    transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.textarea-wrap:focus-within {
+    border-color: rgba(126, 249, 233, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 4px rgba(45, 228, 207, 0.1);
+}
+
+.textarea-wrap textarea {
+    width: calc(100% - 1px);
+    margin-right: 1px;
+    padding: 0.95rem 1.1rem;
+    border-radius: 15px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 300;
+    outline: none;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable; /* резервирует место под скроллбар всегда — нет прыжка ресайзера */
+}
+
 .form-group textarea {
     min-height: 140px;
     resize: vertical;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(236, 255, 253, 0.22) transparent;
+}
+
+.form-group textarea {
+    min-height: 140px;
+    resize: vertical;
+    color-scheme: dark; /* без этого thumb белый несмотря на explicit цвета */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(236, 255, 253, 0.22) transparent;
+}
+
+/* ── Textarea: кастомный скроллбар ── */
+.form-group textarea::-webkit-scrollbar {
+    /* 18px: 2px слева + 6px thumb + 10px прозрачного справа = thumb заметно левее края */
+    width: 10px;
+}
+
+.form-group textarea::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 0;
+}
+
+.form-group textarea::-webkit-scrollbar-thumb {
+    background: rgba(236, 255, 253, 0.22);
+    border-radius: 999px;
+    min-height: 28px;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 2px 5px 0 2px;
+    background-clip: padding-box;
+}
+
+.form-group textarea::-webkit-scrollbar-thumb:hover {
+    background: rgba(236, 255, 253, 0.34);
+    background-clip: padding-box;
+}
+
+.form-group textarea::-webkit-scrollbar-button { display: none; }
+.form-group textarea::-webkit-scrollbar-corner { background: transparent; }
+
+/* ── Textarea: кастомный ресайзер — три диагональных линии, как Chrome, но в тиле ── */
+.form-group textarea::-webkit-resizer {
+    background: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M4 12L12 4' stroke='rgba(236,255,253,0.42)' stroke-width='1.3' stroke-linecap='round'/%3E%3Cpath d='M7 12L12 7' stroke='rgba(236,255,253,0.3)' stroke-width='1.3' stroke-linecap='round'/%3E%3Cpath d='M10 12L12 10' stroke='rgba(236,255,253,0.2)' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    /* Зона 18×18px. SVG 10px с x=1px → центр на 6px.
+       Thumb (6px) центрирован на 5px от левого края — визуально совпадает.
+       scrollbar-gutter:stable держит зону постоянной — ресайзер не прыгает. */
+    background-position: right bottom;
+    background-size: 12px 12px;
+}
+
+/* Красивый resize grip */
+.textarea-wrap {
+    position: relative;
+}
+
+.contact-form .textarea-wrap textarea {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
+.textarea-wrap textarea:focus {
+    border-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 .form-group input::placeholder,
@@ -964,6 +1219,39 @@ body::before {
 }
 
 /* ══════════════════════════════════════════
+   FORM VALIDATION ERRORS
+══════════════════════════════════════════ */
+.form-group.has-error input,
+.form-group.has-error .textarea-wrap,
+.form-group.has-error select {
+    border-color: rgba(255, 80, 80, 0.55) !important;
+    box-shadow: 0 0 0 4px rgba(255, 60, 60, 0.08) !important;
+    background: rgba(255, 50, 50, 0.04) !important;
+}
+
+.form-error-msg {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(255, 120, 100, 0.9);
+    letter-spacing: 0.01em;
+    animation: errFadeIn 0.2s ease;
+}
+
+.form-error-msg svg {
+    flex-shrink: 0;
+    color: rgba(255, 90, 80, 0.85);
+}
+
+@keyframes errFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════
    TOAST
 ══════════════════════════════════════════ */
 .form-toast {
@@ -1040,7 +1328,7 @@ body::before {
 
     .contact-shell {
         border-radius: var(--radius-lg);
-        padding: 1.6rem 1.25rem;
+        padding: 1.6rem 1.1rem 2rem;
     }
 
     .form-grid { grid-template-columns: 1fr; }
@@ -1049,6 +1337,22 @@ body::before {
         left: 12px; right: 12px; top: 12px;
         max-width: none;
     }
+
+    /* Textarea чуть меньше на мобилке */
+    .form-group textarea { min-height: 120px; }
+
+    /* Bug guide компактнее */
+    .bug-guide { padding: 1rem 1.1rem; }
+    .bug-guide-list li { font-size: 0.84rem; }
+
+    /* Кнопка отправить — удобнее на мобилке */
+    .btn-wide { padding: 1rem 1.5rem; font-size: 1rem; }
+
+    /* Page hero на мобилке */
+    .page-hero h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); }
+
+    /* Убираем топнав иконки раньше */
+    .topnav-link svg { display: none; }
 }
 
 @media (max-width: 380px) {
@@ -1058,4 +1362,374 @@ body::before {
         padding: 0.7rem 1rem;
         font-size: 0.85rem;
     }
+}
+
+/* ══════════════════════════════════════════
+   DESKTOP-ONLY CARDS (скрыты на мобильных)
+══════════════════════════════════════════ */
+@media (max-width: 700px) {
+    .card-desktop-only { display: none; }
+}
+
+/* ══════════════════════════════════════════
+   INSTALL STEPS
+══════════════════════════════════════════ */
+.install-steps {
+    margin-top: 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: rgba(10, 32, 29, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: clamp(1.4rem, 3vw, 2.2rem) clamp(1.4rem, 3.5vw, 2.5rem);
+    position: relative;
+    overflow: hidden;
+    transform: translateZ(0);
+}
+
+.install-steps::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(45, 228, 207, 0.07), transparent 50%);
+    pointer-events: none;
+}
+
+.install-steps-head {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.4rem;
+    position: relative;
+}
+
+.install-steps-head h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+
+.install-steps-head svg {
+    color: var(--primary);
+    flex-shrink: 0;
+    display: block;
+    transform: translateY(-1px);
+}
+
+.install-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    position: relative;
+}
+
+.install-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.install-num {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    color: #06211e;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(45, 228, 207, 0.28);
+}
+
+.install-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.install-text strong { color: var(--text); font-weight: 600; }
+
+/* ══════════════════════════════════════════
+   BUG GUIDE
+══════════════════════════════════════════ */
+.bug-guide {
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 179, 71, 0.22);
+    background: rgba(255, 160, 50, 0.06);
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.6rem;
+    position: relative;
+}
+
+.bug-guide-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.91rem;
+    line-height: 1.4;
+    color: #ffd28a;
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.01em;
+}
+
+.bug-guide-title svg {
+    color: #ffb347;
+    flex-shrink: 0;
+    display: block;
+    transform: translateY(-1px);
+}
+
+.bug-guide-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.bug-guide-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-size: 0.875rem;
+    color: rgba(255, 210, 160, 0.82);
+    line-height: 1.5;
+}
+
+.bug-guide-list li::before {
+    content: "·";
+    color: #ffb347;
+    font-weight: 900;
+    flex-shrink: 0;
+    font-size: 1.1rem;
+    line-height: 1.3;
+}
+
+/* ══════════════════════════════════════════
+   CUSTOM SELECT
+══════════════════════════════════════════ */
+.custom-select {
+    position: relative;
+}
+
+.cs-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.95rem 1.1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(126, 249, 233, 0.13);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 300;
+    cursor: pointer;
+    text-align: left;
+    outline: none;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.cs-trigger:hover {
+    border-color: rgba(126, 249, 233, 0.22);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.cs-trigger:focus,
+.custom-select.cs-open .cs-trigger {
+    border-color: rgba(126, 249, 233, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 4px rgba(45, 228, 207, 0.1);
+}
+
+.cs-value { pointer-events: none; flex: 1; }
+
+.cs-placeholder { color: var(--text-soft); }
+
+.cs-arrow {
+    flex-shrink: 0;
+    color: rgba(126, 249, 233, 0.45);
+    transition: transform 0.22s ease, color 0.22s ease;
+}
+
+.custom-select.cs-open .cs-arrow {
+    transform: rotate(180deg);
+    color: var(--accent);
+}
+
+/* Внешний клип-враппер: border-radius + overflow:hidden + анимация */
+.cs-dropdown-clip {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0; right: 0;
+    z-index: 200;
+    border-radius: 16px;
+    border: 1px solid rgba(126, 249, 233, 0.2);
+    background: rgb(7, 24, 22); /* непрозрачный — backdrop-filter убран, он ломал scrollbar в Chrome */
+    box-shadow: 0 20px 56px rgba(0, 0, 0, 0.44), 0 0 0 1px rgba(45, 228, 207, 0.06);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    pointer-events: none;
+    max-height: 280px;
+}
+
+.cs-dropdown-clip::before,
+.cs-dropdown-clip::after {
+    content: "";
+    position: absolute;
+    right: 1px;
+    width: 10px;
+    height: 2px;
+    background: rgb(7, 24, 22);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.cs-dropdown-clip::before {
+    top: 1px;
+}
+
+.cs-dropdown-clip::after {
+    bottom: 1px;
+}
+
+/* псевдоэлемент ::before из предыдущей попытки больше не нужен */
+
+.custom-select.cs-open .cs-dropdown-clip {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Внутренний скролл-список: overflow-y:auto БЕЗ overflow:hidden — margin на треке теперь работает */
+.cs-dropdown {
+    list-style: none;
+    width: calc(100% - 1px);
+    margin-right: 1px;
+    max-height: 264px;
+    overflow-y: auto;
+    padding: 6px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(236, 255, 253, 0.22) transparent;
+}
+
+.cs-dropdown::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+}
+
+.cs-dropdown::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 0;
+    border-radius: 999px;
+}
+
+.cs-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(236, 255, 253, 0.22);
+    border-radius: 999px;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 2px 4px 2px 2px;
+    background-clip: padding-box;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+.cs-dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(236, 255, 253, 0.34);
+}
+
+.cs-dropdown::-webkit-scrollbar-button {
+    display: none;
+}
+
+.cs-dropdown::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+
+
+.cs-option {
+    padding: 0.78rem 1.1rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.14s ease, color 0.14s ease;
+    outline: none;
+    user-select: none;
+}
+
+.cs-option:hover,
+.cs-option:focus {
+    background: rgba(45, 228, 207, 0.09);
+    color: var(--text);
+}
+
+.cs-option.cs-selected {
+    color: var(--accent);
+    background: rgba(45, 228, 207, 0.07);
+    font-weight: 500;
+}
+
+.cs-option + .cs-option {
+    border-top: 1px solid rgba(126, 249, 233, 0.06);
+}
+
+/* Error state */
+.form-group.has-error .cs-trigger {
+    border-color: rgba(255, 80, 80, 0.55) !important;
+    box-shadow: 0 0 0 4px rgba(255, 60, 60, 0.08) !important;
+    background: rgba(255, 50, 50, 0.04) !important;
+}
+
+/* ══════════════════════════════════════════
+   ANNOUNCEMENT NO-TRANSITION (instant restore)
+══════════════════════════════════════════ */
+.ann-instant,
+.ann-instant * {
+    transition: none !important;
+}
+
+/* ══════════════════════════════════════════
+   PAGE HERO (статус / ошибка)
+══════════════════════════════════════════ */
+.page-hero {
+    padding: 3rem 0 2rem;
+    text-align: center;
+}
+
+.page-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, #ffffff 30%, var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.1;
+}
+
+.page-hero p {
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+}
+
+@media (max-width: 700px) {
+    .page-hero { padding: 2rem 0 1.5rem; }
 }
