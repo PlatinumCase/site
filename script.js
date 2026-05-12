@@ -1,5 +1,11 @@
+/* ── MODULE-LEVEL STATE: file attachments (contact page) ── */
+let contactFiles  = [];   // [{id, file, url}]
+let _nextFileId   = 0;
+let _syncAttachUI = null; // set by initAttachments, called after reset
+
 document.addEventListener("DOMContentLoaded", () => {
     initSmoothScroll();
+    initAttachments();
     initForm();
     initCustomSelects();
     createParticles();
@@ -276,22 +282,46 @@ function initForm() {
         const timeoutId  = setTimeout(() => controller.abort(), 8000);
 
         try {
-            const formData = new FormData(form);
-            const response = await fetch("https://formspree.io/f/xaqvdqok", {
-                method: "POST",
-                body:   formData,
+            // Build FormData using Forminit's fi-{type}-{name} field convention
+            const formData = new FormData();
+            formData.append("fi-sender-fullName", form.querySelector("#name")?.value  || "");
+            formData.append("fi-sender-email",    form.querySelector("#email")?.value || "");
+            formData.append("fi-text-category",   form.querySelector("#category")?.value || "");
+            formData.append("fi-text-message",    form.querySelector("#message")?.value || "");
+
+            // Attach files — Forminit supports fi-file-{name} up to 25 MB
+            contactFiles.forEach(entry => {
+                formData.append("fi-file-attachments[]", entry.file, entry.file.name);
+            });
+
+            const response = await fetch("https://forminit.com/f/5u722hwhbce", {
+                method:  "POST",
+                body:    formData,
                 headers: { Accept: "application/json" },
-                signal: controller.signal,
+                signal:  controller.signal,
             });
 
             clearTimeout(timeoutId);
-            if (!response.ok) throw new Error("Form submission failed");
+
+            if (!response.ok) {
+                let detail = "";
+                try { const j = await response.json(); detail = j.error || j.errors?.[0]?.message || ""; } catch {}
+                throw new Error(detail || "HTTP " + response.status);
+            }
 
             showToast("Сообщение успешно отправлено ✅", true);
             form.reset();
+            if (_syncAttachUI) _syncAttachUI(true); // clear previews after success
             window.scrollTo({ top: 0, behavior: "smooth" });
         } catch (error) {
-            showToast("Ошибка отправки ❌ попробуйте позже", false);
+            clearTimeout(timeoutId);
+            const isAbort   = error.name === "AbortError";
+            const isCors    = error.name === "TypeError" && !error.message.includes("HTTP");
+            let toastMsg;
+            if (isAbort)   toastMsg = "Превышено время ожидания ❌ попробуйте снова";
+            else if (isCors) toastMsg = "Ошибка сети ❌ проверь консоль браузера";
+            else            toastMsg = "Ошибка: " + (error.message || "попробуйте позже") + " ❌";
+            showToast(toastMsg, false);
         } finally {
             clearTimeout(timeoutId);
             if (button) {
@@ -388,6 +418,164 @@ function preventActiveNavReload() {
         link.addEventListener("click", (e) => {
             e.preventDefault();
         });
+    });
+}
+
+/* ── IMAGE ATTACHMENTS (contact page) ── */
+function initAttachments() {
+    const MAX_FILES = 3;
+    const fileInput = document.getElementById("file-input");
+    const attachBtn = document.getElementById("attach-btn");
+    const preview   = document.getElementById("file-preview");
+    const counter   = document.getElementById("attach-counter");
+    const limitMsg  = document.getElementById("attach-limit-msg");
+    if (!fileInput) return;
+
+    /* helpers */
+    function fmtSize(b) {
+        if (b >= 1048576) return (b / 1048576).toFixed(1) + " МБ";
+        if (b >= 1024)    return Math.round(b / 1024)      + " КБ";
+        return b + " Б";
+    }
+
+    function imgIconSVG() {
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"'
+             + ' fill="none" stroke="currentColor" stroke-width="1.8"'
+             + ' stroke-linecap="round" stroke-linejoin="round">'
+             + '<rect x="3" y="3" width="18" height="18" rx="3"/>'
+             + '<circle cx="8.5" cy="8.5" r="1.5"/>'
+             + '<polyline points="21 15 16 10 5 21"/></svg>';
+    }
+
+    /* sync counter / attach-btn state; pass reset=true to clear all previews */
+    function syncUI(reset) {
+        if (reset) {
+            contactFiles.forEach(e => { if (e.url) URL.revokeObjectURL(e.url); });
+            contactFiles = [];
+            preview.innerHTML = "";
+        }
+        const n = contactFiles.length;
+        preview.dataset.count = n;
+        if (n === 0) {
+            counter.textContent = "";
+            counter.classList.remove("visible", "maxed");
+        } else {
+            counter.textContent = n + " / " + MAX_FILES;
+            counter.classList.add("visible");
+            counter.classList.toggle("maxed", n >= MAX_FILES);
+        }
+        attachBtn.classList.toggle("attach-maxed", n >= MAX_FILES);
+    }
+
+    /* expose so initForm can reset after successful submit */
+    _syncAttachUI = syncUI;
+
+    /* build a card DOM node */
+    function buildCard(entry) {
+        const card  = document.createElement("div");
+        card.className = "file-card";
+        card.dataset.fid = entry.id;
+
+        const thumb = document.createElement("div");
+        thumb.className = "fc-thumb";
+        if (entry.url) {
+            const img = document.createElement("img");
+            img.src = entry.url;
+            img.alt = entry.file.name;
+            thumb.appendChild(img);
+        } else {
+            thumb.innerHTML = imgIconSVG();
+        }
+
+        const info = document.createElement("div");
+        info.className = "fc-info";
+        const name = document.createElement("div");
+        name.className = "fc-name";
+        name.textContent = entry.file.name;
+        const size = document.createElement("div");
+        size.className = "fc-size";
+        size.textContent = fmtSize(entry.file.size);
+        info.appendChild(name);
+        info.appendChild(size);
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "fc-remove";
+        btn.setAttribute("aria-label", "Удалить " + entry.file.name);
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"'
+                      + ' viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+                      + ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'
+                      + '<line x1="18" y1="6" x2="6" y2="18"/>'
+                      + '<line x1="6" y1="6" x2="18" y2="18"/></svg>';
+        btn.addEventListener("click", () => removeEntry(entry.id));
+
+        card.appendChild(thumb);
+        card.appendChild(info);
+        card.appendChild(btn);
+        return card;
+    }
+
+    function addCards(newEntries) {
+        newEntries.forEach(entry => {
+            const card = buildCard(entry);
+            card.classList.add("fc-entering");
+            preview.appendChild(card);
+            card.addEventListener("animationend", () => card.classList.remove("fc-entering"), { once: true });
+        });
+        syncUI();
+    }
+
+    function removeEntry(id) {
+        const idx = contactFiles.findIndex(e => e.id === id);
+        if (idx === -1) return;
+        if (contactFiles[idx].url) URL.revokeObjectURL(contactFiles[idx].url);
+        contactFiles.splice(idx, 1);
+        limitMsg.classList.remove("show");
+
+        const n = contactFiles.length;
+        if (n === 0) {
+            counter.textContent = "";
+            counter.classList.remove("visible", "maxed");
+        } else {
+            counter.textContent = n + " / " + MAX_FILES;
+            counter.classList.add("visible");
+            counter.classList.toggle("maxed", n >= MAX_FILES);
+        }
+        attachBtn.classList.toggle("attach-maxed", n >= MAX_FILES);
+
+        const card = preview.querySelector('[data-fid="' + id + '"]');
+        if (!card) { preview.dataset.count = n; return; }
+        card.classList.add("fc-leaving");
+        card.addEventListener("animationend", () => {
+            card.remove();
+            preview.dataset.count = contactFiles.length;
+        }, { once: true });
+    }
+
+    fileInput.addEventListener("change", () => {
+        const incoming = Array.from(fileInput.files);
+        const added = [];
+        let blocked = false;
+
+        incoming.forEach(file => {
+            if (contactFiles.length >= MAX_FILES) { blocked = true; return; }
+            const dup = contactFiles.some(e => e.file.name === file.name && e.file.size === file.size);
+            if (dup) return;
+            const url   = file.type.startsWith("image/") ? URL.createObjectURL(file) : null;
+            const entry = { id: _nextFileId++, file, url };
+            contactFiles.push(entry);
+            added.push(entry);
+        });
+
+        if (added.length) addCards(added);
+
+        if (blocked) {
+            limitMsg.classList.add("show");
+            clearTimeout(limitMsg._t);
+            limitMsg._t = setTimeout(() => limitMsg.classList.remove("show"), 3000);
+        }
+
+        fileInput.value = "";
     });
 }
 
