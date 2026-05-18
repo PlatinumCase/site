@@ -5,14 +5,14 @@
     "message": "Мессенджер недоступен, выполняется перенос данных"
   },
   "services": {
-    "auth_telegram":  { "label": "Авторизация через Telegram", "status": "ok",   "text": "Ограничено"   },
-    "auth_phone":     { "label": "Авторизация по номеру",      "status": "ok",   "text": "Отключено"   },
-    "messaging":      { "label": "Отправка сообщений",         "status": "warn", "text": "Отключено" },
-    "channels":       { "label": "Создание каналов",           "status": "warn", "text": "Отключено" },
-    "chats":          { "label": "Создание чатов",             "status": "warn", "text": "Отключено" },
-    "search":         { "label": "Поиск",                      "status": "warn", "text": "Отключено" },
-    "change_profile": { "label": "Изменение профиля",          "status": "warn", "text": "Отключено"  },
-    "read_receipts":  { "label": "Система прочтения",          "status": "ok",   "text": "Отключено"   },
-    "caching":        { "label": "Система кеширования",        "status": "ok",   "text": "Отключено"   }
+    "auth_telegram":  { "label": "Авторизация через Telegram", "status": "warn",   "text": "Ограничено"   },
+    "auth_phone":     { "label": "Авторизация по номеру",      "status": "down",   "text": "Отключено"   },
+    "messaging":      { "label": "Отправка сообщений",         "status": "down", "text": "Отключено" },
+    "channels":       { "label": "Создание каналов",           "status": "down", "text": "Отключено" },
+    "chats":          { "label": "Создание чатов",             "status": "down", "text": "Отключено" },
+    "search":         { "label": "Поиск",                      "status": "down", "text": "Отключено" },
+    "change_profile": { "label": "Изменение профиля",          "status": "down", "text": "Отключено"  },
+    "read_receipts":  { "label": "Система прочтения",          "status": "down",   "text": "Отключено"   },
+    "caching":        { "label": "Система кеширования",        "status": "down",   "text": "Отключено"   }
   }
 }
