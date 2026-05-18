@@ -1,18 +1,18 @@
 {
   "announcement": {
-    "enabled": true,
+    "enabled": false,
     "title": "Временные неполадки",
     "message": "Мессенджер недоступен, выполняется перенос данных"
   },
   "services": {
-    "auth_telegram":  { "label": "Авторизация через Telegram", "status": "warn",   "text": "Ограничено"   },
-    "auth_phone":     { "label": "Авторизация по номеру",      "status": "down",   "text": "Отключено"   },
-    "messaging":      { "label": "Отправка сообщений",         "status": "down", "text": "Отключено" },
-    "channels":       { "label": "Создание каналов",           "status": "down", "text": "Отключено" },
-    "chats":          { "label": "Создание чатов",             "status": "down", "text": "Отключено" },
-    "search":         { "label": "Поиск",                      "status": "down", "text": "Отключено" },
-    "change_profile": { "label": "Изменение профиля",          "status": "down", "text": "Отключено"  },
-    "read_receipts":  { "label": "Система прочтения",          "status": "down",   "text": "Отключено"   },
-    "caching":        { "label": "Система кеширования",        "status": "down",   "text": "Отключено"   }
+    "auth_telegram":  { "label": "Авторизация через Telegram", "status": "ok",   "text": "Работает"   },
+    "auth_phone":     { "label": "Авторизация по номеру",      "status": "ok",   "text": "Работает"   },
+    "messaging":      { "label": "Отправка сообщений",         "status": "ok", "text": "Работает" },
+    "channels":       { "label": "Создание каналов",           "status": "ok", "text": "Работает" },
+    "chats":          { "label": "Создание чатов",             "status": "ok", "text": "Работает" },
+    "search":         { "label": "Поиск",                      "status": "ok", "text": "Работает" },
+    "change_profile": { "label": "Изменение профиля",          "status": "ok", "text": "Работает"  },
+    "read_receipts":  { "label": "Система прочтения",          "status": "ok",   "text": "Работает"   },
+    "caching":        { "label": "Система кеширования",        "status": "ok",   "text": "Работает"   }
   }
 }
