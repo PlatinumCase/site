@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /script.js
+Disallow: /style.css
+Disallow: /status.json
+Disallow: /CNAME
+Disallow: /yandex_c2a1c413cfaf55fc.html
+
+Allow: /
+
+Sitemap: https://sum-net.ru/sitemap.xml
