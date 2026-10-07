@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -7,8 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-    <title>Sumnet – Статус</title>
-    <meta name="description" content="Статус компонентов приложения Sumnet в реальном времени.">
+    <title>Sumnet – Status</title>
+    <meta name="description" content="Real-time operational status of Sumnet application components.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="page-status">
@@ -16,8 +16,8 @@
 
     <div class="site-header-wrap">
 
-        <!-- Announcement bar — заполняется из status.json -->
-        <div class="announcement-bar" id="announcement-bar" role="alert" >
+        <!-- Announcement bar — filled from status.json -->
+        <div class="announcement-bar" id="announcement-bar" role="alert">
             <div class="announcement-inner">
                 <span class="announcement-icon" aria-hidden="true">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -56,10 +56,10 @@
                 <div class="brand">
                     <div class="brand-text">
                         <span class="brand-name">Sumnet</span>
-                        <span class="brand-tagline">Найди и свяжись с людьми по номеру или ID</span>
+                        <span class="brand-tagline">Find and connect with people by number or ID</span>
                     </div>
                 </div>
-                <nav class="topnav" aria-label="Навигация">
+                <nav class="topnav" aria-label="Navigation">
                     <a href="index.html" class="topnav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -67,7 +67,7 @@
                             <polyline points="7 10 12 15 17 10"/>
                             <line x1="12" y1="15" x2="12" y2="3"/>
                         </svg>
-                        Скачать
+                        Download
                     </a>
                     <a href="status.html" class="topnav-link active">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -75,14 +75,14 @@
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12 6 12 12 16 14"/>
                         </svg>
-                        Статус
+                        Status
                     </a>
                     <a href="contact.html" class="topnav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
-                        Ошибка
+                        Report Bug
                     </a>
                 </nav>
             </div>
@@ -93,12 +93,12 @@
         <section class="status-section">
             <div class="container">
                 <div class="page-hero">
-                    <h1>Статус работоспособности</h1>
-                    <p>Актуальное состояние всех компонентов приложения</p>
+                    <h1>System Status</h1>
+                    <p>Real-time operational status of all application components</p>
                 </div>
 
                 <div class="status-grid" id="status-grid">
-                    <!-- JS заполняет отсюда -->
+                    <!-- Filled by JavaScript -->
                     <div class="status-skeleton"></div>
                     <div class="status-skeleton"></div>
                     <div class="status-skeleton"></div>
@@ -117,7 +117,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Sumnet. Все права защищены.</p>
+            <p>&copy; 2026 Sumnet. All rights reserved.</p>
         </div>
     </footer>
 
