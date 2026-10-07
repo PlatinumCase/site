@@ -104,7 +104,7 @@ function renderAnnouncement(ann) {
     setTimeout(scheduleScrollbarTrackUpdate, 360);
 }
 
-/** *текст* → <strong>текст</strong> */
+/** *text* → <strong>text</strong> */
 function parseBold(str) {
     return str.replace(/\*([^*]+)\*/g, "<strong>$1</strong>");
 }
@@ -123,14 +123,14 @@ const SERVICE_ICONS = {
 };
 
 const STATUS_META = {
-    ok:   { label: "Работает",   cls: "s-ok"   },
-    warn: { label: "Ограничено", cls: "s-warn"  },
-    down: { label: "Недоступно", cls: "s-down"  },
+    ok:   { label: "Operational", cls: "s-ok"   },
+    warn: { label: "Degraded",    cls: "s-warn"  },
+    down: { label: "Outage",      cls: "s-down"  },
 };
 
 function renderStatusGrid(services) {
     const grid = document.getElementById("status-grid");
-    if (!grid) return; // страница без статус-сетки — пропускаем
+    if (!grid) return;
 
     if (!services) { grid.innerHTML = ""; return; }
 
@@ -158,17 +158,17 @@ function renderStatusGrid(services) {
         </div>`;
     }).join("");
 
-    // Итоговая строка
+    // Summary line
     const total   = Object.keys(services).length;
     const issues  = Object.values(services).filter(s => s.status !== "ok").length;
     const noteEl  = document.getElementById("status-note");
     if (!noteEl) return;
 
     if (issues === 0) {
-        noteEl.textContent = "Все системы работают в штатном режиме.";
+        noteEl.textContent = "All systems are operational.";
         noteEl.className   = "status-note ok";
     } else {
-        noteEl.textContent = `${issues} из ${total} компонентов работают с ограничениями.`;
+        noteEl.textContent = `${issues} of ${total} components have degraded performance.`;
         noteEl.className   = "status-note warn";
     }
 }
@@ -176,7 +176,7 @@ function renderStatusGrid(services) {
 function renderStatusFallback() {
     const grid = document.getElementById("status-grid");
     if (!grid) return;
-    grid.innerHTML = `<p class="status-fallback">Не удалось загрузить статус. Проверьте наличие файла status.json.</p>`;
+    grid.innerHTML = `<p class="status-fallback">Failed to load system status. Please verify status.json.</p>`;
 }
 
 /* ── SMOOTH SCROLL ── */
@@ -195,17 +195,17 @@ function initSmoothScroll() {
 
 /* ── FORM ── */
 const FIELD_ERRORS = {
-    name:     { valueMissing: "Пожалуйста, введите ваше имя." },
-    email:    { valueMissing: "Введите адрес электронной почты.", typeMismatch: "Проверьте формат: name@example.com" },
-    category: { valueMissing: "Выберите категорию ошибки из списка." },
-    message:  { valueMissing: "Опишите проблему — без этого мы не сможем помочь." },
+    name:     { valueMissing: "Please enter your name." },
+    email:    { valueMissing: "Please enter your email address.", typeMismatch: "Check format: name@example.com" },
+    category: { valueMissing: "Please select a bug category from the list." },
+    message:  { valueMissing: "Please describe the problem so we can help." },
 };
 
 function getFieldError(input) {
     const rules = FIELD_ERRORS[input.id] || {};
-    if (input.validity.valueMissing) return rules.valueMissing || "Это поле обязательно.";
-    if (input.validity.typeMismatch) return rules.typeMismatch || "Некорректное значение.";
-    if (input.validity.tooShort)     return `Минимум ${input.minLength} символов.`;
+    if (input.validity.valueMissing) return rules.valueMissing || "This field is required.";
+    if (input.validity.typeMismatch) return rules.typeMismatch || "Invalid value.";
+    if (input.validity.tooShort)     return `Minimum ${input.minLength} characters.`;
     return null;
 }
 
@@ -245,7 +245,7 @@ function validateForm(form) {
         const group  = cs.closest(".form-group");
         if (!hidden || !group) return;
         if (!hidden.value) {
-            showFieldError(group, FIELD_ERRORS.category?.valueMissing || "Выберите категорию.");
+            showFieldError(group, FIELD_ERRORS.category?.valueMissing || "Please select a category.");
             valid = false;
         } else clearFieldError(group);
     });
@@ -274,11 +274,11 @@ function initForm() {
         }
 
         const button = form.querySelector('button[type="submit"]');
-        const originalText = button?.textContent || "Отправить";
+        const originalText = button?.textContent || "Submit";
 
         if (button) {
             button.disabled = true;
-            button.textContent = "Отправка...";
+            button.textContent = "Sending...";
         }
 
         const controller = new AbortController();
@@ -312,7 +312,7 @@ function initForm() {
                 throw new Error(detail || "HTTP " + response.status);
             }
 
-            showToast("Сообщение успешно отправлено ✅", true);
+            showToast("Message sent successfully ✅", true);
             form.reset();
             if (_syncAttachUI) _syncAttachUI(true); // clear previews after success
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -321,9 +321,9 @@ function initForm() {
             const isAbort   = error.name === "AbortError";
             const isCors    = error.name === "TypeError" && !error.message.includes("HTTP");
             let toastMsg;
-            if (isAbort)   toastMsg = "Превышено время ожидания ❌ попробуйте снова";
-            else if (isCors) toastMsg = "Ошибка сети ❌ проверь консоль браузера";
-            else            toastMsg = "Ошибка: " + (error.message || "попробуйте позже") + " ❌";
+            if (isAbort)   toastMsg = "Request timed out ❌ please try again";
+            else if (isCors) toastMsg = "Network error ❌ check browser console";
+            else            toastMsg = "Error: " + (error.message || "please try again later") + " ❌";
             showToast(toastMsg, false);
         } finally {
             clearTimeout(timeoutId);
@@ -436,9 +436,9 @@ function initAttachments() {
 
     /* helpers */
     function fmtSize(b) {
-        if (b >= 1048576) return (b / 1048576).toFixed(1) + " МБ";
-        if (b >= 1024)    return Math.round(b / 1024)      + " КБ";
-        return b + " Б";
+        if (b >= 1048576) return (b / 1048576).toFixed(1) + " MB";
+        if (b >= 1024)    return Math.round(b / 1024)      + " KB";
+        return b + " B";
     }
 
     function imgIconSVG() {
@@ -504,7 +504,7 @@ function initAttachments() {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "fc-remove";
-        btn.setAttribute("aria-label", "Удалить " + entry.file.name);
+        btn.setAttribute("aria-label", "Remove " + entry.file.name);
         btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"'
                       + ' viewBox="0 0 24 24" fill="none" stroke="currentColor"'
                       + ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'
@@ -628,7 +628,6 @@ function createParticles() {
         }
         requestAnimationFrame(draw);
     }
-    
 
     draw();
 
