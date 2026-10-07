@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -7,17 +7,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-    <title>Sumnet – Сообщить об ошибке</title>
-    <meta name="description" content="Опишите проблему в приложении Sumnet — мы разберёмся.">
+    <title>Sumnet – Report a Bug</title>
+    <meta name="description" content="Feedback form to report issues and bugs in Sumnet.">
     <link rel="stylesheet" href="style.css">
-
 </head>
-<body>
+<body class="page-contact">
     <div class="particles" aria-hidden="true"></div>
 
     <div class="site-header-wrap">
 
-        <!-- Announcement bar — заполняется из status.json -->
+        <!-- Announcement bar — filled from status.json -->
         <div class="announcement-bar" id="announcement-bar" role="alert">
             <div class="announcement-inner">
                 <span class="announcement-icon" aria-hidden="true">
@@ -57,10 +56,10 @@
                 <div class="brand">
                     <div class="brand-text">
                         <span class="brand-name">Sumnet</span>
-                        <span class="brand-tagline">Найди и свяжись с людьми по номеру или ID</span>
+                        <span class="brand-tagline">Find and connect with people by number or ID</span>
                     </div>
                 </div>
-                <nav class="topnav" aria-label="Навигация">
+                <nav class="topnav" aria-label="Navigation">
                     <a href="index.html" class="topnav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -68,7 +67,7 @@
                             <polyline points="7 10 12 15 17 10"/>
                             <line x1="12" y1="15" x2="12" y2="3"/>
                         </svg>
-                        Скачать
+                        Download
                     </a>
                     <a href="status.html" class="topnav-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -76,14 +75,14 @@
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12 6 12 12 16 14"/>
                         </svg>
-                        Статус
+                        Status
                     </a>
                     <a href="contact.html" class="topnav-link active">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
-                        Ошибка
+                        Report Bug
                     </a>
                 </nav>
             </div>
@@ -94,11 +93,11 @@
         <section class="contact">
             <div class="container contact-shell">
                 <div class="section-head">
-                    <h2>Сообщить об ошибке</h2>
-                    <p>Опиши проблему — сообщение уйдёт без перехода на другую страницу.</p>
+                    <h2>Report a Bug</h2>
+                    <p>Describe the issue — your message will be sent without leaving the page.</p>
                 </div>
 
-                <!-- Инструкция: как описать ошибку -->
+                <!-- Bug reporting instructions -->
                 <div class="bug-guide" role="note">
                     <div class="bug-guide-title">
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -107,21 +106,21 @@
                             <line x1="12" y1="8" x2="12" y2="12"/>
                             <line x1="12" y1="16" x2="12.01" y2="16"/>
                         </svg>
-                        Чтобы мы быстрее разобрались — укажи в сообщении:
+                        To help us resolve the issue faster, please mention:
                     </div>
                     <ul class="bug-guide-list">
-                        <li>Что именно не работает и как это проявляется (например: «кнопка не реагирует», «приложение закрывается»).</li>
-                        <li>Шаги, при которых возникает проблема — что нажимал, куда переходил.</li>
-                        <li>Модель устройства и версию Android (Настройки → О телефоне).</li>
-                        <li>Если есть — скопируй текст ошибки или сделай скриншот и опиши, что на нём.</li>
+                        <li>What exactly isn't working and how it looks (e.g., «button doesn't respond», «app crashes»).</li>
+                        <li>Steps to reproduce — what you tapped, where you navigated.</li>
+                        <li>Device model and Android version (Settings → About phone).</li>
+                        <li>If possible, copy error text or attach a screenshot and describe what's on it.</li>
                     </ul>
                 </div>
 
                 <form id="contact-form" class="contact-form" novalidate>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="name">Ваше имя</label>
-                            <input type="text" id="name" name="name" placeholder="Например, Алексей" required>
+                            <label for="name">Your name</label>
+                            <input type="text" id="name" name="name" placeholder="e.g. Alex" required>
                         </div>
 
                         <div class="form-group">
@@ -131,10 +130,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Категория ошибки</label>
+                        <label>Bug category</label>
                         <div class="custom-select" id="category-select">
                             <button type="button" class="cs-trigger" aria-haspopup="listbox" aria-expanded="false">
-                                <span class="cs-value cs-placeholder">Выбери область проблемы…</span>
+                                <span class="cs-value cs-placeholder">Select problem area…</span>
                                 <svg class="cs-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -142,15 +141,15 @@
                                 </svg>
                             </button>
                             <div class="cs-dropdown-clip">
-                                <ul class="cs-dropdown" role="listbox" aria-label="Категория ошибки">
-                                    <li class="cs-option" data-value="auth"          role="option" tabindex="-1">Авторизация и вход в аккаунт</li>
-                                    <li class="cs-option" data-value="messaging"     role="option" tabindex="-1">Отправка и получение сообщений</li>
-                                    <li class="cs-option" data-value="search"        role="option" tabindex="-1">Поиск пользователей</li>
-                                    <li class="cs-option" data-value="profile"       role="option" tabindex="-1">Изменение профиля</li>
-                                    <li class="cs-option" data-value="channels"      role="option" tabindex="-1">Каналы и чаты</li>
-                                    <li class="cs-option" data-value="notifications" role="option" tabindex="-1">Уведомления</li>
-                                    <li class="cs-option" data-value="install"       role="option" tabindex="-1">Установка приложения</li>
-                                    <li class="cs-option" data-value="other"         role="option" tabindex="-1">Другое</li>
+                                <ul class="cs-dropdown" role="listbox" aria-label="Bug category">
+                                    <li class="cs-option" data-value="auth"          role="option" tabindex="-1">Sign-in & Account Authorization</li>
+                                    <li class="cs-option" data-value="messaging"     role="option" tabindex="-1">Sending & Receiving Messages</li>
+                                    <li class="cs-option" data-value="search"        role="option" tabindex="-1">User Search</li>
+                                    <li class="cs-option" data-value="profile"       role="option" tabindex="-1">Profile Editing</li>
+                                    <li class="cs-option" data-value="channels"      role="option" tabindex="-1">Channels & Chats</li>
+                                    <li class="cs-option" data-value="notifications" role="option" tabindex="-1">Notifications</li>
+                                    <li class="cs-option" data-value="install"       role="option" tabindex="-1">App Installation</li>
+                                    <li class="cs-option" data-value="other"         role="option" tabindex="-1">Other</li>
                                 </ul>
                             </div>
                             <input type="hidden" name="category" id="category" required>
@@ -158,29 +157,29 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="message">Описание проблемы</label>
+                        <label for="message">Issue description</label>
 
                         <div class="textarea-wrap">
                             <textarea id="message" name="message" rows="6"
-                                placeholder="Опиши, что произошло: что делал, что увидел, на каком устройстве…" required></textarea>
+                                placeholder="Describe what happened: what you did, what you saw, on what device…" required></textarea>
                         </div>
 
-                        <!-- Кнопка прикрепления — отдельно под полем -->
+                        <!-- Attach button -->
                         <div class="attach-row">
                             <label for="file-input" class="attach-btn" id="attach-btn"
-                                   title="Прикрепить изображение (макс. 3)">
+                                   title="Attach images (max 3)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
                                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.08-8.08a4 4 0 0 1 5.66 5.66l-8.09 8.08a2 2 0 0 1-2.83-2.83l7.4-7.4"/>
                                 </svg>
-                                Прикрепить фото
+                                Attach photos
                             </label>
                             <input type="file" id="file-input" accept="image/*" multiple style="display:none;">
                             <span class="attach-counter" id="attach-counter"></span>
                         </div>
 
-                        <!-- Предупреждение о лимите -->
+                        <!-- Limit warning -->
                         <div class="attach-limit-msg" id="attach-limit-msg">
                             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"
                                  viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -189,14 +188,14 @@
                                 <line x1="12" y1="8"  x2="12"    y2="12"/>
                                 <line x1="12" y1="16" x2="12.01" y2="16"/>
                             </svg>
-                            Максимум 3 изображения
+                            Maximum 3 images
                         </div>
 
-                        <!-- Сетка карточек -->
+                        <!-- Preview grid -->
                         <div id="file-preview" class="file-preview" data-count="0"></div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-wide">Отправить</button>
+                    <button type="submit" class="btn btn-primary btn-wide">Submit</button>
                 </form>
             </div>
         </section>
@@ -204,7 +203,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Sumnet. Все права защищены.</p>
+            <p>&copy; 2026 Sumnet. All rights reserved.</p>
         </div>
     </footer>
 
