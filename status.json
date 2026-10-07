@@ -1,18 +1,18 @@
 {
   "announcement": {
     "enabled": false,
-    "title": "Временные неполадки",
-    "message": "Мессенджер недоступен, выполняется перенос данных"
+    "title": "Temporary Issues",
+    "message": "Messenger unavailable, data migration in progress"
   },
   "services": {
-    "auth_telegram":  { "label": "Авторизация через Telegram", "status": "warn",   "text": "Приостоновленно"   },
-    "auth_phone":     { "label": "Авторизация по номеру",      "status": "warn",   "text": "Приостоновленно"   },
-    "messaging":      { "label": "Отправка сообщений",         "status": "warn", "text": "Приостоновленно" },
-    "channels":       { "label": "Создание каналов",           "status": "warn", "text": "Приостоновленно" },
-    "chats":          { "label": "Создание чатов",             "status": "warn", "text": "Приостоновленно" },
-    "search":         { "label": "Поиск",                      "status": "warn", "text": "Приостоновленно" },
-    "change_profile": { "label": "Изменение профиля",          "status": "warn", "text": "Приостоновленно"  },
-    "read_receipts":  { "label": "Система прочтения",          "status": "warn",   "text": "Приостоновленно"   },
-    "caching":        { "label": "Система кеширования",        "status": "warn",   "text": "Приостоновленно"   }
+    "auth_telegram":  { "label": "Telegram Authorization", "status": "warn",   "text": "Paused" },
+    "auth_phone":     { "label": "Phone Authorization",    "status": "warn",   "text": "Paused" },
+    "messaging":      { "label": "Messaging",              "status": "warn",   "text": "Paused" },
+    "channels":       { "label": "Channels Creation",      "status": "warn",   "text": "Paused" },
+    "chats":          { "label": "Group Chats Creation",   "status": "warn",   "text": "Paused" },
+    "search":         { "label": "Search",                 "status": "warn",   "text": "Paused" },
+    "change_profile": { "label": "Profile Management",     "status": "warn",   "text": "Paused" },
+    "read_receipts":  { "label": "Read Receipts",          "status": "warn",   "text": "Paused" },
+    "caching":        { "label": "Caching System",         "status": "warn",   "text": "Paused" }
   }
 }
