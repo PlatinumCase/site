@@ -47,15 +47,14 @@
 }
 
 html {
-    /* scroll-behavior только через JS (scrollIntoView) — убираем отсюда,
-       иначе при прокрутке скроллбаром мышью будет двойной рывок */
+    /* scroll-behavior only via JS (scrollIntoView) */
     color-scheme: dark;
     overflow-y: auto;
-    /* фон html чтобы не было чёрного под body на коротких страницах */
+    /* html background to prevent black under body on short pages */
     background: var(--bg-1);
 }
 
-/* Страничный скроллбар */
+/* Page scrollbar */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
     width: var(--page-scrollbar-size);
@@ -67,7 +66,7 @@ body::-webkit-scrollbar-track {
     border-radius: 999px;
 }
 
-/* Скрываем thumb когда прокрутка не нужна */
+/* Hide thumb when scroll is not needed */
 html.no-scroll::-webkit-scrollbar-track { background: transparent; }
 html.no-scroll::-webkit-scrollbar-thumb { background: transparent !important; }
 body.no-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -101,8 +100,7 @@ body::-webkit-scrollbar-thumb:active {
     box-shadow: none;
 }
 
-/* Убираем системные кнопки-стрелки целиком:
-   в Chrome/Windows их hover/active частично рисуется нативно и перебивает CSS */
+/* Remove system arrow buttons entirely: */
 html::-webkit-scrollbar-button,
 body::-webkit-scrollbar-button,
 html::-webkit-scrollbar-button:single-button,
@@ -140,9 +138,9 @@ body {
     line-height: 1.6;
     color: var(--text);
     min-height: 100vh;
-    /* clip вместо hidden — не создаёт scroll-контейнер, sticky в потомках работает */
+    /* clip instead of hidden — does not create scroll container, sticky works in descendants */
     overflow-x: clip;
-    /* flex-колонка чтобы footer прижимался к низу на коротких страницах */
+    /* flex column so footer sticks to bottom on short pages */
     display: flex;
     flex-direction: column;
     background:
@@ -189,11 +187,11 @@ body::before {
 
 main {
     animation: pageFadeIn 0.22s ease both;
-    flex: 1; /* растягивает main чтобы footer всегда был внизу */
+    flex: 1; /* stretches main so footer is always at bottom */
     padding-top: var(--header-offset);
 }
 
-/* Fade-out при уходе со страницы */
+/* Fade-out when leaving page */
 body.page-leaving main {
     opacity: 0;
     transform: translateY(-8px);
@@ -351,16 +349,26 @@ body.page-leaving main {
     text-align: center;
 }
 
+.topbar-brand-row {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .brand {
     display: flex;
     align-items: center;
     gap: 0.7rem;
     justify-content: center;
+    text-align: center;
 }
 
 .brand-text {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0;
 }
 
@@ -731,11 +739,11 @@ body.page-leaving main {
   body.page-status.no-scroll .status-section > .container,
   body.page-status.no-scroll .footer .container {
     position: relative;
-    left: -5.79px; /* вместо -6px */
+    left: -5.79px; /* instead of -6px */
   }
 }
 
-/* mobile: без смещения */
+/* mobile: no offset */
 @media (max-width: 700px) {
   body.page-status.no-scroll .announcement-inner,
   body.page-status.no-scroll .topbar-inner,
@@ -1048,7 +1056,7 @@ body.page-leaving main {
     display: block;
     overflow-x: hidden;
     overflow-y: auto;
-    scrollbar-gutter: stable; /* резервирует место под скроллбар всегда — нет прыжка ресайзера */
+    scrollbar-gutter: stable; /* reserves scrollbar space to prevent resizer jumps */
 }
 
 .form-group textarea {
@@ -1061,14 +1069,14 @@ body.page-leaving main {
 .form-group textarea {
     min-height: 140px;
     resize: vertical;
-    color-scheme: dark; /* без этого thumb белый несмотря на explicit цвета */
+    color-scheme: dark; /* ensures thumb is dark across platforms */
     scrollbar-width: thin;
     scrollbar-color: rgba(236, 255, 253, 0.22) transparent;
 }
 
-/* ── Textarea: кастомный скроллбар ── */
+/* ── Textarea: custom scrollbar ── */
 .form-group textarea::-webkit-scrollbar {
-    /* 18px: 2px слева + 6px thumb + 10px прозрачного справа = thumb заметно левее края */
+    /* 18px: 2px left + 6px thumb + 10px transparent right */
     width: 10px;
 }
 
@@ -1095,19 +1103,17 @@ body.page-leaving main {
 .form-group textarea::-webkit-scrollbar-button { display: none; }
 .form-group textarea::-webkit-scrollbar-corner { background: transparent; }
 
-/* ── Textarea: кастомный ресайзер — три диагональных линии, как Chrome, но в тиле ── */
+/* ── Textarea: custom resizer — diagonal lines in teal theme ── */
 .form-group textarea::-webkit-resizer {
     background: transparent;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M4 12L12 4' stroke='rgba(236,255,253,0.42)' stroke-width='1.3' stroke-linecap='round'/%3E%3Cpath d='M7 12L12 7' stroke='rgba(236,255,253,0.3)' stroke-width='1.3' stroke-linecap='round'/%3E%3Cpath d='M10 12L12 10' stroke='rgba(236,255,253,0.2)' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    /* Зона 18×18px. SVG 10px с x=1px → центр на 6px.
-       Thumb (6px) центрирован на 5px от левого края — визуально совпадает.
-       scrollbar-gutter:stable держит зону постоянной — ресайзер не прыгает. */
+    /* 18x18px zone. Stable scrollbar gutter prevents resizer jump. */
     background-position: right bottom;
     background-size: 12px 12px;
 }
 
-/* Красивый resize grip */
+/* Clean resize grip */
 .textarea-wrap {
     position: relative;
 }
@@ -1354,20 +1360,20 @@ body.page-leaving main {
         max-width: none;
     }
 
-    /* Textarea чуть меньше на мобилке */
+    /* Textarea slightly smaller on mobile */
     .form-group textarea { min-height: 120px; }
 
-    /* Bug guide компактнее */
+    /* Bug guide more compact */
     .bug-guide { padding: 1rem 1.1rem; }
     .bug-guide-list li { font-size: 0.84rem; }
 
-    /* Кнопка отправить — удобнее на мобилке */
+    /* Submit button mobile styling */
     .btn-wide { padding: 1rem 1.5rem; font-size: 1rem; }
 
-    /* Page hero на мобилке */
+    /* Page hero on mobile */
     .page-hero h1 { font-size: clamp(1.9rem, 9vw, 2.6rem); }
 
-    /* Убираем топнав иконки раньше */
+    /* Hide topnav icons earlier on mobile */
     .topnav-link svg { display: none; }
 }
 
@@ -1381,7 +1387,7 @@ body.page-leaving main {
 }
 
 /* ══════════════════════════════════════════
-   DESKTOP-ONLY CARDS (скрыты на мобильных)
+   DESKTOP-ONLY CARDS (hidden on mobile)
 ══════════════════════════════════════════ */
 @media (max-width: 700px) {
     .card-desktop-only { display: none; }
@@ -1583,7 +1589,7 @@ body.page-leaving main {
     color: var(--accent);
 }
 
-/* Внешний клип-враппер: border-radius + overflow:hidden + анимация */
+/* Outer clip wrapper: border-radius + overflow:hidden + animation */
 .cs-dropdown-clip {
     position: absolute;
     top: calc(100% + 6px);
@@ -1591,7 +1597,7 @@ body.page-leaving main {
     z-index: 200;
     border-radius: 16px;
     border: 1px solid rgba(126, 249, 233, 0.2);
-    background: rgb(7, 24, 22); /* непрозрачный — backdrop-filter убран, он ломал scrollbar в Chrome */
+    background: rgb(7, 24, 22); /* opaque — backdrop-filter removed to ensure scrollbar stability in Chrome */
     box-shadow: 0 20px 56px rgba(0, 0, 0, 0.44), 0 0 0 1px rgba(45, 228, 207, 0.06);
     overflow: hidden;
     opacity: 0;
@@ -1621,7 +1627,7 @@ body.page-leaving main {
     bottom: 1px;
 }
 
-/* псевдоэлемент ::before из предыдущей попытки больше не нужен */
+/* pseudo-element ::before no longer needed */
 
 .custom-select.cs-open .cs-dropdown-clip {
     opacity: 1;
@@ -1629,7 +1635,7 @@ body.page-leaving main {
     pointer-events: auto;
 }
 
-/* Внутренний скролл-список: overflow-y:auto БЕЗ overflow:hidden — margin на треке теперь работает */
+/* Inner scroll list: overflow-y:auto without overflow:hidden */
 .cs-dropdown {
     list-style: none;
     width: calc(100% - 1px);
@@ -1720,7 +1726,7 @@ body.page-leaving main {
 }
 
 /* ══════════════════════════════════════════
-   PAGE HERO (статус / ошибка)
+   PAGE HERO (status / contact)
 ══════════════════════════════════════════ */
 .page-hero {
     padding: 3rem 0 2rem;
@@ -1761,14 +1767,14 @@ body.page-leaving main {
     margin-top: 0.6rem; /* same gap as label → input */
 }
 
-/* Кнопка "Прикрепить фото" — высота выровнена с соседними элементами */
+/* Attach button — height aligned with adjacent elements */
 .form-group label.attach-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     width: fit-content;
     margin-bottom: 0;
-    padding: 10px 16px 10px 12px; /* увеличен по высоте */
+    padding: 10px 16px 10px 12px; /* height adjusted */
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,.1);
     background: rgba(255,255,255,.04);
@@ -1796,7 +1802,7 @@ body.page-leaving main {
     pointer-events: none;
 }
 
-/* Счётчик */
+/* Counter */
 .attach-counter {
     font-family: 'DM Sans', sans-serif;
     font-size: 12px;
